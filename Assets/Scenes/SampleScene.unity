@@ -494,7 +494,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _audioSource: {fileID: 1346513831}
-  _maxDelta: 3
+  _seconds: 3
 --- !u!61 &1346513830
 BoxCollider2D:
   m_ObjectHideFlags: 0

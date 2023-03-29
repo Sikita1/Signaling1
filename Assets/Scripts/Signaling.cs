@@ -1,7 +1,5 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
 
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(AudioSource))]
@@ -10,7 +8,7 @@ public class Signaling : MonoBehaviour
     private const string Flicker = "Signal";
 
     [SerializeField] private AudioSource _audioSource;
-    [SerializeField] private float _maxDelta;
+    [SerializeField] private float _seconds;
 
     private Animator _animator;
     private Coroutine _coroutine;
@@ -58,7 +56,7 @@ public class Signaling : MonoBehaviour
     {
         while (_audioSource.volume != volume)
         {
-            _audioSource.volume += (Mathf.MoveTowards(current, target, Time.deltaTime / _maxDelta)) * number;
+            _audioSource.volume += (Mathf.MoveTowards(current, target, Time.deltaTime / _seconds)) * number;
             yield return null;
         }
     }
