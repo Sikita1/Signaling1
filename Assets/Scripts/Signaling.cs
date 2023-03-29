@@ -5,16 +5,27 @@ using UnityEngine;
 [RequireComponent(typeof(AudioSource))]
 public class Signaling : MonoBehaviour
 {
-    private const string Flicker = "Signal";
+    private const string Signal = "Signal";
 
     [SerializeField] private AudioSource _audioSource;
     [SerializeField] private float _seconds;
+    [SerializeField] private House _house;
 
     private Animator _animator;
     private Coroutine _coroutine;
 
     private float _minVolume = 0f;
     private float _maxVolume = 1f;
+
+    private void OnEnable()
+    {
+        _house.StayChangend += OnStayChangend;
+    }
+
+    private void OnDisable()
+    {
+        _house.StayChangend -= OnStayChangend;
+    }
 
     private void Start()
     {
@@ -23,40 +34,28 @@ public class Signaling : MonoBehaviour
         _audioSource.volume = _minVolume;
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    private void OnStayChangend(bool stay)
     {
-        if (collision.TryGetComponent<Player>(out Player player))
-        {
-            if (_coroutine != null)
-                StopCoroutine(_coroutine);
+        if (_coroutine != null)
+            StopCoroutine(_coroutine);
 
-            _audioSource.Play();
-            _animator.SetBool(Flicker, true);
-            _coroutine = StartCoroutine(AskVolume(_minVolume, _maxVolume, _maxVolume, 1));
+        _animator.SetBool(Signal, stay);
+
+        if (stay)
+        {
+            _coroutine = StartCoroutine(AskVolume(_maxVolume));
+        }
+        else
+        {
+            _coroutine = StartCoroutine(AskVolume(_minVolume));
         }
     }
 
-    private void OnTriggerExit2D(Collider2D collision)
+    private IEnumerator AskVolume(float targetVolue)
     {
-        if (collision.TryGetComponent<Player>(out Player player))
+        while (_audioSource.volume != targetVolue)
         {
-            if (_coroutine != null)
-            {
-                StopCoroutine(_coroutine);
-                _animator.SetBool(Flicker, false);
-                _coroutine = StartCoroutine(AskVolume(_minVolume, _audioSource.volume, _minVolume, -1));
-
-                if (_audioSource.volume == _minVolume)
-                    _audioSource.Stop();
-            }
-        }
-    }
-
-    private IEnumerator AskVolume(float current, float target, float volume, int number)
-    {
-        while (_audioSource.volume != volume)
-        {
-            _audioSource.volume += (Mathf.MoveTowards(current, target, Time.deltaTime / _seconds)) * number;
+            _audioSource.volume = Mathf.MoveTowards(_audioSource.volume, targetVolue, Time.deltaTime / _seconds);
             yield return null;
         }
     }
