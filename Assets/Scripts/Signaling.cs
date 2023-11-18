@@ -42,13 +42,9 @@ public class Signaling : MonoBehaviour
         _animator.SetBool(Signal, stay);
 
         if (stay)
-        {
             _coroutine = StartCoroutine(AskVolume(_maxVolume));
-        }
         else
-        {
             _coroutine = StartCoroutine(AskVolume(_minVolume));
-        }
     }
 
     private IEnumerator AskVolume(float targetVolue)

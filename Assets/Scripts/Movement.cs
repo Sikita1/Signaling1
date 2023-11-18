@@ -1,5 +1,6 @@
 using UnityEngine;
 
+[RequireComponent(typeof(Animator))]
 public class Movement : MonoBehaviour
 {
     private const string Run = "Run";
@@ -19,12 +20,12 @@ public class Movement : MonoBehaviour
     {
         _moveInput = Input.GetAxis("Horizontal");
 
-        if(Input.GetKey(KeyCode.D))
+        if (_moveInput > 0)
         {
             RunPlayer(true);
             transform.Translate(_speed * Time.deltaTime, 0, 0);
         }
-        else if (Input.GetKey(KeyCode.A))
+        else if (_moveInput < 0)
         {
             RunPlayer(true);
             transform.Translate(_speed * Time.deltaTime * -1, 0, 0);
